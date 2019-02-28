@@ -129,10 +129,14 @@ def find_ip_address_local():
     return ip_address
  
 def get_ip_address():
-    data = urllib.urlopen('https://check.torproject.org/').read()
-    ip_address = find_ip_address_url(data) 
+    ip_address = None
+    try:
+        data = urllib.urlopen('https://check.torproject.org/').read()
+        ip_address = find_ip_address_url(data)
+    except:
+        pass
     if ip_address is None:
-        ip_address = find_ip_address_local() 
+        ip_address = find_ip_address_local()
     return ip_address
 
 def get_random_free_port():
