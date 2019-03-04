@@ -136,7 +136,7 @@ def get_ip_address():
     except IOError:
         logging.warning("DNS failed to resolve, could not retrieve your public IP address. This will affect measurements unless your machine has a public IP address. Falling back to finding your IP locally...")
     except Exception as e:
-        logging.warning("There was a problem retrieving your public IP address, the error was {0}. This will affect measurements unless your machine has a public IP address. Falling back to finding your IP locally. Falling back to finding your IP locally...".format(e))
+        logging.warning("There was a problem retrieving your public IP address, the error was {0}. This will affect measurements unless your machine has a public IP address. Falling back to finding your IP locally...".format(e))
     if ip_address is None:
         ip_address = find_ip_address_local()
     return ip_address
