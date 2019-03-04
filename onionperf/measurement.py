@@ -171,9 +171,7 @@ class Measurement(object):
         self.hs_service_id = None
         self.hs_v3_service_id = None
         self.www_docroot = "{0}/htdocs".format(self.datadir_path)
-        self.base_config = ""
-        if "BASETORRC" in os.environ:
-            self.base_config = os.environ['BASETORRC']
+        self.base_config = os.environ['BASETORRC'] if "BASETORRC" in os.environ else ""
 
     def run(self, do_onion=True, do_inet=True, client_tgen_listen_port=58888, client_tgen_connect_ip='0.0.0.0', client_tgen_connect_port=8080, client_tor_ctl_port=59050, client_tor_socks_port=59000,
              server_tgen_listen_port=8080, server_tor_ctl_port=59051, server_tor_socks_port=59001):
