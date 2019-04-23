@@ -253,6 +253,11 @@ class Analysis(object):
                                     for i in range(1, 10):
                                         d.pop('DATAPERC{}0'.format(i))
 
+                                if 'partial_completion' in xfer_db['elapsed_seconds']:
+                                    for partial in sorted(xfer_db['elapsed_seconds']['partial_completion'].keys()):
+                                        if partial in xfer_db['elapsed_seconds']['partial_completion'] and xfer_db['elapsed_seconds']['partial_completion'][partial] is not None:
+                                            d['PARTIAL{0}'.format(partial)] = ts_to_str(xfer_db['unix_ts_start'] + xfer_db['elapsed_seconds']['partial_completion'][partial])
+
                                 if 'last_byte' in xfer_db['elapsed_seconds']:
                                     d['DATACOMPLETE'] = ts_to_str(xfer_db['unix_ts_start'] + xfer_db['elapsed_seconds']['last_byte'])
 
@@ -415,9 +420,14 @@ class Transfer(object):
         self.id = tid
         self.last_event = None
         self.payload_progress = {decile:None for decile in [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]}
+        self.partial_completion = {partial:None for partial in [51200, 1048576, 5242880]}
 
     def add_event(self, status_event):
         progress_frac = float(status_event.payload_bytes_status) / float(status_event.filesize_bytes)
+        progress = float(status_event.payload_bytes_status)
+        for partial in sorted(self.partial_completion.keys()):
+            if progress >= partial and self.partial_completion[partial] is None:
+                self.partial_completion[partial] = status_event.unix_ts_end
         for decile in sorted(self.payload_progress.keys()):
             if progress_frac >= decile and self.payload_progress[decile] is None:
                 self.payload_progress[decile] = status_event.unix_ts_end
@@ -430,6 +440,7 @@ class Transfer(object):
         d = e.__dict__
         if not e.is_error:
             d['elapsed_seconds']['payload_progress'] = {decile: self.payload_progress[decile] - e.unix_ts_start for decile in self.payload_progress if self.payload_progress[decile] is not None}
+            d['elapsed_seconds']['partial_completion'] = {partial: self.partial_completion[partial] - e.unix_ts_start for partial in self.partial_completion if self.partial_completion[partial] is not None}
         return d
 
 class Parser(object):
