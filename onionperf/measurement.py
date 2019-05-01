@@ -215,6 +215,7 @@ class Measurement(object):
                 general_writables.append(self.__start_tgen_server(server_tgen_listen_port))
 
             if do_onion:
+                logging.info("Onion Service private keys will be placed in {0}".format(self.privatedir_path))
                 tor_writable, torctl_writable = self.__start_tor_server(server_tor_ctl_port, server_tor_socks_port, {client_tgen_connect_port:server_tgen_listen_port})
                 general_writables.append(tor_writable)
                 general_writables.append(torctl_writable)
@@ -434,8 +435,8 @@ WarnUnsafeSocks 0\nSafeLogging 0\nMaxCircuitDirtiness 60 seconds\nDataDirectory 
     def __start_tor(self, name, control_port, socks_port, hs_port_mapping=None):
         logging.info("Starting Tor {0} process with ControlPort={1}, SocksPort={2}...".format(name, control_port, socks_port))
         tor_datadir = "{0}/tor-{1}".format(self.datadir_path, name)
-        key_path_v2 = os.path.expanduser("~/os_key_v2") 
-        key_path_v3 = os.path.expanduser("~/os_key_v3") 
+        key_path_v2 = "{0}/os_key_v2".format(self.privatedir_path)
+        key_path_v3 = "{0}/os_key_v3".format(self.privatedir_path)
 
         if not os.path.exists(tor_datadir): os.makedirs(tor_datadir)
         tor_config = self.create_tor_config(control_port,socks_port,tor_datadir,name)
