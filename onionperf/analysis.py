@@ -192,6 +192,7 @@ class Analysis(object):
                         d['FILESIZE'] = xfer_db['filesize_bytes']
                         d['READBYTES'] = xfer_db['total_bytes_read']
                         d['WRITEBYTES'] = xfer_db['total_bytes_write']
+                        d['DIDTIMEOUT'] = 0
 
                         def ts_to_str(ts): return"{0:.02f}".format(ts)
 
@@ -244,7 +245,9 @@ class Analysis(object):
                                     d['DATACOMPLETE'] = ts_to_str(xfer_db['unix_ts_start'] + xfer_db['elapsed_seconds']['last_byte'])
 
                         # could be ioerror or timeout or etc, but i dont think torperf distinguishes these
-                        d['DIDTIMEOUT'] = 1 if xfer_db['is_error'] is True else 0
+                        if xfer_db['is_error']:
+                            d['DIDTIMEOUT'] = 1 
+                            d['ERRORCODE'] = xfer_db['error_code']
 
                         # now get the tor parts
                         srcport = int(xfer_db['endpoint_local'].split(':')[2])
