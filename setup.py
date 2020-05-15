@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(name='OnionPerf',
       version='0.2.pre',
@@ -9,4 +9,12 @@ setup(name='OnionPerf',
       url='https://github.com/robgjansen/onionperf/',
       packages=['onionperf'],
       scripts=['onionperf/onionperf'],
+      install_requires=["lxml",
+                        "matplotlib",
+                        "networkx",
+                        "nose-cov",
+                        "nose",
+                        "numpy",
+                        "scipy",
+                        "stem"]
      )
